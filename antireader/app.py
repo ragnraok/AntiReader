@@ -13,6 +13,13 @@ def init_app():
 
     return app
 
+def init_task_app():
+    app = Flask(__app__)
+    app.config.from_pyfile('config.py')
+    db.init_app(app)
+    app.debug = app.config['DEBUG']
+    init_task_logger(app)
+
 app = init_app()
 
 if __name__ == '__main__':

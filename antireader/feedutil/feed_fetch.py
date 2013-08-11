@@ -12,7 +12,7 @@ class FeedData(object):
         self.parser = None
         self.has_parser = False
         self.if_feed_link = if_feed_link
-    
+
     def init_data(self):
         locale.setlocale(locale.LC_TIME, "en_US.UTF8")
         if not self.if_feed_link:

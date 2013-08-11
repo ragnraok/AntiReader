@@ -13,9 +13,10 @@ def init_logger(app):
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(formatter)
 
-    app.logger.addHandler(stream_handler)
+    #app.logger.addHandler(stream_handler)
     app.logger.addHandler(file_handler)
     app.logger.setLevel(logging.DEBUG)
+    app.logger.propagate = False
 
 def init_task_logger(app):
     pass
