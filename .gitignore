@@ -1,0 +1,8 @@
+*.pyc
+venv/
+test/
+*.swp
+*.swo
+TODO
+*.log
+*.db
