@@ -40,8 +40,15 @@ class FeedData(object):
         if 'updated' in self.parser['channel']:
             timestr = self.parser['channel']['updated']
             version = self.parser.version
+            print "timestr = %s" % timestr
+            return self.__parse_timestr(version, timestr, self.site)
+        elif 'published' in self.parser['channel']:
+            timestr = self.parser['channel']['published']
+            version = self.parser.version
+            print "timestr = %s" % timestr
             return self.__parse_timestr(version, timestr, self.site)
         else:
+            print "timestr is None"
             return None
 
     def __parse_timestr(self, version, timestr, url):
@@ -53,12 +60,18 @@ class FeedData(object):
                 %a, %d %b %Y %H:%M:%S
                 """
                 return datetime.datetime.strptime(timestr[:25], "%a, %d %b %Y %H:%M:%S")
-            except: 
+            except:
                 # sucks situations
                 if 'csdn.net' in url:
                     return datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
                 elif '163.com' in url:
                     return datetime.datetime.strptime(timestr[:19], "%Y-%m-%dT%H:%M:%S")
+                else:
+                    """
+                    in this format:
+                        %Y-%m-%d %H:%M:%S
+                    """
+                    return datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
         elif 'atom' in version:
             """
             for general situation
@@ -117,8 +130,9 @@ if __name__ == '__main__':
     print feed_data.feed_url
     print feed_data.site_title
     print feed_data.site_updated
-    for article in feed_data.site_articles:
-        print article['title']
-        print article['date']
-        print article['link']
-        #print article['content']
+    print feed_data.parser['channel']
+    #for article in feed_data.site_articles:
+    #    print article['title']
+    #    print article['date']
+    #    print article['link']
+    #    #print article['content']
