@@ -40,15 +40,15 @@ class FeedData(object):
         if 'updated' in self.parser['channel']:
             timestr = self.parser['channel']['updated']
             version = self.parser.version
-            print "timestr = %s" % timestr
+            #print "timestr = %s" % timestr
             return self.__parse_timestr(version, timestr, self.site)
         elif 'published' in self.parser['channel']:
             timestr = self.parser['channel']['published']
             version = self.parser.version
-            print "timestr = %s" % timestr
+            #print "timestr = %s" % timestr
             return self.__parse_timestr(version, timestr, self.site)
         else:
-            print "timestr is None"
+            #print "timestr is None"
             return None
 
     def __parse_timestr(self, version, timestr, url):
