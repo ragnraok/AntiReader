@@ -1,0 +1,30 @@
+{% extends "content_layout.html" %}
+{% block layout_id %}source-list-layout{% endblock %}
+{% block nav_addition_class %}nav-source-list{% endblock %}
+{% block sourcelist_link %}#{% endblock %}
+{% block sourcelist_class %}list-selected{% endblock %}
+{% block content %}
+<!-- source list -->
+<div class="pure-u source-gridview">
+  <div class="pure-g-r">
+    {% for item in source_list %}
+    <div class="pure-u-1-4 source-grid">
+      <div class="source-grid-content">
+        <h3 class="site-title"><a href="#">{{ item.title|safe }}</a></h3>
+        <div class="site-detail">
+          <p class="site-lastest-update">最后更新: <span class="site-lastest-update-time">{{ item.updated|safe  }}<span></p>
+              <ul class="site-lastest-articles-list">
+                {% for i in item.articles %}
+                <li class="site-lastest-articles-item">
+                  <a href="{{ i.link }}">{{ i.title }}</a>
+                </li>
+                {% endfor %}
+              </ul>
+              <a href="#" class="site-delete" id="{{ item.id }}">取消订阅</a>
+            </div>
+          </div>
+        </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

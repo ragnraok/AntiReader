@@ -19,4 +19,16 @@ def init_logger(app):
     app.logger.propagate = False
 
 def init_task_logger(app):
-    pass
+    logger = logging.getLogger('apscheduler.scheduler')
+    formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]')
+
+    file_handler = RotatingFileHandler(app.config['TASK_LOG_FILE'], maxBytes=100000,
+            backupCount=10)
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(formatter)
+
+    #app.logger.addHandler(stream_handler)
+    logger.addHandler(file_handler)
+    logger.setLevel(logging.DEBUG)
+    logger.propagate = False

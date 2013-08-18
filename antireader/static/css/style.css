@@ -1,0 +1,411 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+}
+
+ul, ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+pre, code {
+  background-color: #F0FFF0;
+  font-family: ubuntu, monospace;
+}
+
+pre {
+  border: 1px solid #EEE0E5;
+  border-radius: 5px;
+  padding: 7px;
+  line-height: 1.3em;
+}
+
+pre:hover,
+pre:focus {
+  background: none;
+}
+
+code {
+  border: 1px dotted #EEE0E5;
+  border-radius: 5px;
+  margin: 2px 5px;
+  font-size: 0.8em;
+  padding: 2px;
+  white-space: nowrap;
+}
+
+code:hover,
+code:focus {
+  background: none;
+}
+
+.header img {
+  height: 40px;
+  margin-left: 100px;
+}
+
+.header .pure-menu ul {
+  font-size: 20px;
+  vertical-align: bottom;
+}
+
+.header .pure-menu li a:hover,
+.header .pure-menu li a:focus {
+  border: none;
+  color: #aaa;
+}
+
+/*
+ * fieldset's size is equal to function-box
+ * but form's size just half of fieldset, that is 250px;
+ * */
+
+.function-box {
+  width: 500px;
+  height: auto;
+  margin-top: 10%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: none;
+  text-align: center;
+}
+
+.function-form {
+  font-size: 20px;
+}
+
+.function-form input {
+  margin-bottom: 5px;
+}
+
+#intro-text {
+  text-align: center;
+  font-size: 25px;
+  font-family: ubuntu;
+  color: #FF00FF;
+}
+
+#layout {
+  padding-left:500px;
+  position: relative;
+}
+
+#login-prompt-text {
+  text-align: center;
+  font-size: 15px;
+  color: #C7C7C7;
+}
+
+#login-prompt-text:hover,
+#login-prompt-text:focus {
+  color: #292929;
+}
+
+.alert-error {
+  text-align: center;
+  font-size: 15px;
+  color: #DC143C;
+  /*
+  background-color: #CD69C9;
+  border-radius: 5px;
+  */
+}
+
+.error-warning {
+  position: fixed;
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 13px;
+  text-align: center;
+  padding-top: 10px;
+  color: #CD3700;
+}
+
+#source-list-layout {
+  padding-left:150px;
+  position: relative;
+}
+
+.nav,
+#list {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
+#list {
+  margin-left: -350px;
+  padding-bottom: 10px;
+  width:350px;
+  border-right: 1px solid #ddd;
+}
+
+#main {
+  width: 100%;
+}
+
+.nav {
+  margin-left: -500px;
+  width:150px;
+  background: rgb(37, 42, 58);
+  text-align: center;
+  padding: 2em 0;
+}
+
+.nav .pure-menu {
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+
+.nav .pure-menu a:hover,
+.nav .pure-menu a:focus {
+  background: rgb(55, 60, 90);
+}
+
+.nav .pure-menu .list-selected {
+  background: rgb(55, 60, 90);
+}
+
+.nav .pure-menu a {
+  color: #fff;
+  margin-left: 0.5em;
+}
+
+.nav .pure-menu-heading {
+  border-bottom: none;
+  font-size:110%;
+  color: rgb(75, 113, 151);
+}
+
+.nav-source-list {
+  margin-left: -150px;
+}
+
+
+.setting-label-color1,
+.setting-label-color2,
+.setting-label-color3 {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  margin-right: 0.5em;
+  border-radius: 3px;
+}
+.setting-label-color1 {
+  background: #ffc94c;
+}
+.setting-label-color2 {
+  background: #41ccb4;
+}
+.setting-label-color3 {
+  background: #40c365;
+}
+
+.article-item {
+  padding: 0.9em 1em;
+  border-bottom: 1px solid #ddd;
+  border-left: 6px solid transparent;
+  background: none;
+}
+.article-item:hover,
+.article-item:focus {
+  background-color:#EAEAEA;
+}
+.article-item img {
+  display: none;
+}
+.article-name {
+  margin: 0;
+  text-transform: uppercase;
+  color: #8B8B83;
+}
+.article-item-hidden-field {
+  display: none;
+}
+.article-desc {
+  font-size: 80%;
+  margin: 0.4em 0;
+  color: #424242;
+}
+
+.article-desc img {
+}
+
+.article-desc a {
+  color: #424242;
+  text-decoration: none;
+}
+
+.load-more-article-box,
+#no-more-article-prompt {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+#no-more-article-prompt {
+  display: none;
+}
+
+.article-item-selected {
+  background: #eee;
+}
+
+.article-content-header, .article-content-body, .article-content-footer {
+  padding: 1em 2em;
+}
+.article-content-header {
+  border-bottom: 1px solid #ddd;
+}
+.article-content-title {
+  font-family: sans-serif;
+  font-size: 25px;
+}
+.article-content-subtitle {
+  font-size: 1em;
+  margin: 0;
+  font-weight: normal;
+}
+.article-content-subtitle span {
+  color: #999;
+}
+.article-content-subtitle a {
+  color: #96CDCD;
+  text-decoration: none;
+}
+.article-content-subtitle a:hover {
+  color: #999;
+}
+.article-author {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.article-updated {
+  margin-left: 5px;
+}
+.article-url {
+  position: relative;
+  text-align: center;
+  margin-top: 50px;
+}
+.article-url-button {
+  color: white;
+  border-raidus: 5px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  background: rgb(66, 184, 221);
+  margin-bottom: 30px;
+  padding-top: -20px;
+}
+.article-content-body img {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#loading-article-prompt {
+  text-align: center;
+  margin-top: 300px;
+  margin-bottom: 300px;
+  font-size: 30px;
+  color: blue;
+}
+
+.source-gridview {
+  margin-left: 160px;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.source-grid {
+  margin: 10px;
+  border: 1px solid #CCCCCC;
+  background: none;
+  width: 250px;
+  height: 250px;
+  box-shadow: 0.5px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.source-grid:hover,
+.source-grid:focus {
+  background: none;
+  box-shadow:2px 2px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+
+.source-grid-content {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.site-title {
+  margin-top: 20px;
+  font-size: 20px;
+  border-bottom: 1px dotted #C4C4C4;
+  padding-left: 5px;
+}
+
+.site-title a {
+  color: #555555;
+}
+
+.site-title a:hover,
+.site-title a:focus {
+  color: #0A0A0A;
+}
+
+.site-lastest-update {
+  color: #555555;
+  padding-left: 2px;
+}
+
+.site-lastest-update-time {
+  padding-left: 10px;
+}
+
+.site-lastest-articles-list {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.site-lastest-articles-item {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px dotted #D9D9D9;
+  font-size: 13px;
+}
+
+.site-lastest-articles-item a {
+  color: #555555;
+}
+
+.site-lastest-articles-item a:hover,
+.site-lastest-articles-item a:focus {
+  color: #0A0A0A;
+}
+
+.site-delete {
+  font-size: 7px;
+  float: right;
+  margin-top: 10px;
+  color: #7A7A7A;
+}
+
+.site-delete:hover,
+.site-delete:focus {
+  color: #424242;
+}

@@ -4,8 +4,8 @@ from antireader.models import FeedSite
 
 sched = Scheduler()
 
-@sched.cron_schedule(hour='0')
-#@sched.interval_schedule(minutes=1)
+#@sched.cron_schedule(hour='0')
+@sched.interval_schedule(hours=1)
 def clock_task():
     # update all sites
     sites = FeedSite.query.all()

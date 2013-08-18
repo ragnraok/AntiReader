@@ -1,0 +1,19 @@
+<!-- content content -->
+<div class="content">
+  <div class="article-content pure-g">
+    <div class="article-content-header pure-g">
+      <div class="pure-u-1">
+        <h1 class="article-content-title">{{ article.title  }}</h1>
+        <p class="article-content-subtitle">
+          来源:<a href="{{ article.site_link }}" class="article-author" target="_blank">{{ article.source|safe }}</a>   日期:<span class="article-updated">{{ article.updated|safe }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="article-content-body pure-u-1">
+      {{ article.content|safe }}
+    </div>
+  </div>
+</div>
+<div class="article-url">
+  <a href="{{ article.link }}" target="_blank" class="pure-button article-url-button">查看原文</a>
+</div>

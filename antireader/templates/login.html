@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="content">
+  <div class="header">
+    <div class="pure-menu pure-menu-open pure-menu-fixed pure-menu-horizontal">
+      <a class="pure-menu-heading" href="#"><img src="{{url_for('static', filename='images/logo2.png')}}"/></a>
+    </div>
+
+    <div class="function-box">
+      <p id="login-prompt-text">Just Confirm Who You Are...</p>
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      {% for message in messages %}
+      <p class="alert-error">{{ message }}</p>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <div class="function-form">
+        <!-- the login form -->
+        <form class="pure-form" action="" method="POST">
+          {{ form.hidden_tag() }}
+          <fieldset>
+            {{form.username(class_="pure-input-1-2", placeholder="Username")}}
+            {% if form.username.errors %}
+            <ul class="error-warning">
+              {% for e in form.username.errors %}
+              <li>{{ e }}</li>
+              {% endfor %}
+            </ul>
+          </fieldset>
+          {% endif %}
+          <fieldset>
+            {{form.password(class_="pure-input-1-2", placeholder="Password")}}
+            {% if form.password.errors %}
+            <ul class="error-warning">
+              {% for e in form.password.errors %}
+              <li>{{ e }}</li>
+              {% endfor %}
+            </ul>
+            {% endif %}
+          </fieldset>
+          <button type="submit" class="pure-button pure-input-1-2 pure-button-primary">Login</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

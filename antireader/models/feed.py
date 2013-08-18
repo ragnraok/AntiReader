@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from antireader.database import db
 from antireader.feedutil import FeedData, get_feed_link, CannotGetFeedSite
+from antireader.task import add_update_task
 from flask import current_app as app
 
 import datetime
@@ -28,6 +29,20 @@ class FeedSite(db.Model):
             self.updated = updated
         else:
             self.updated = datetime.datetime.now()
+
+    @classmethod
+    def create_site(cls, url):
+        # first check if exist the same site
+        feed_link = get_feed_link(url)
+        if feed_link is None:
+            raise CannotGetFeedSite(url)
+        if FeedSite.query.filter_by(url=feed_link).count() > 0:
+            return
+
+        site = FeedSite(url)
+        db.session.add(site)
+        db.session.commit()
+        add_update_task(site.id)
 
     def __repr__(self):
         return "<Site: %s>" % (self.title, )

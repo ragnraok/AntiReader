@@ -7,7 +7,10 @@ DATABASE_NAME = 'antireader.db'
 ADMIN_NAME = "antireader"
 ADMIN_PASSWORD = "antireader"
 LOG_FILE = "antireader.log"
+TASK_LOG_FILE = "antireader_task.log"
 SECRET_KEY = "PtV9ua4oSBknM5GbTLNQ"
+DEFAULT_ARTICLE_SHOW_NUM = 30
+PER_PAGE_ARTICLE_NUM = 10
 
 """
 database setting

@@ -1,0 +1,40 @@
+{% extends "content_layout.html" %}
+{% block layout_id %}layout{% endblock %}
+{% block sourcelist_link %}#{% endblock %}
+{% block content %}
+<div class="pure-u" id="list">
+  <div class="content" id="article-list">
+    <!-- articles list  -->
+    {% for item in article_list %}
+    <a class="article-item-link" href="{{ item.link }}">
+      {% if loop.index == 1 %}
+      <div class="article-item pure-g article-item-selected">
+      {% else %}
+      <div class="article-item pure-g">
+      {% endif %}
+        <div class="pure-u-3-4">
+          <h5 class="article-name"  id={{ item.id }}>{{ item.name|safe }}</h5>
+          <!--
+          <p class="article-desc">
+            {{ item.content|truncate(100, True)|safe }}
+          </p>
+          -->
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% if article_info.length > article_info.show_button_min_length %}
+  <div class="load-more-article-box">
+    <a href="#" class="pure-button" id="more-article-prompt">加载更多</a>
+  </div>
+  {% endif %}
+  <p id="no-more-article-prompt">没有更多文章了</p>
+</div>
+<!-- article content -->
+<div class="pure-u" id="main">
+  <div id="loading-article-prompt">
+    <p>Loading...</p>
+  </div>
+</div>
+{% endblock %}
