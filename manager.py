@@ -1,6 +1,5 @@
 from flask.ext.script import Manager, Command, Option
 from flask import current_app as app
-from antireader.models import FeedSite, Article
 from antireader.database import db
 from antireader.app import init_app
 
@@ -16,13 +15,21 @@ def syncdb():
 def dropdb():
     db.drop_all()
 
+@manager.command
+def create_test_data():
+    test_site = FeedSite('http://coolshell.cn/')
+    db.session.add(test_site)
+    db.session.commit()
+
 @manager.shell
 def make_shell():
+    from antireader.models import FeedSite, Article
     return dict(
             app=app,
             FeedSite=FeedSite,
             Article=Article,
-            use_bpython=True
+            use_bpython=True,
+            db=db
             )
 
 class GunicornServer(Command):

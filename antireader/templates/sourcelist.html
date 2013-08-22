@@ -1,7 +1,6 @@
 {% extends "content_layout.html" %}
 {% block layout_id %}source-list-layout{% endblock %}
 {% block nav_addition_class %}nav-source-list{% endblock %}
-{% block sourcelist_link %}#{% endblock %}
 {% block sourcelist_class %}list-selected{% endblock %}
 {% block content %}
 <!-- source list -->
@@ -16,7 +15,7 @@
               <ul class="site-lastest-articles-list">
                 {% for i in item.articles %}
                 <li class="site-lastest-articles-item">
-                  <a href="{{ i.link }}">{{ i.title }}</a>
+                  <a href="{{ i.link }}">{{ i.title|truncate(15, True)|safe }}</a>
                 </li>
                 {% endfor %}
               </ul>

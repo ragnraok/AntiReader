@@ -1,1 +1,1 @@
-from feed import FeedSite, Article
+from feed import FeedSite, Article, StartArticle

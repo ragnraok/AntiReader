@@ -7,7 +7,7 @@
       timeline.handle();
     }
     else if (location.indexOf("sourcelist") != -1) {
-      sourcelist.handle();
+      //sourcelist.handle();
     }
   }
 
@@ -123,6 +123,8 @@
   };
 
   SourceList.prototype = {
+    handle: function() {
+    }
   };
 
 

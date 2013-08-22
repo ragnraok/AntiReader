@@ -108,3 +108,31 @@ class Article(db.Model):
             for a in articles:
                 db.session.add(articles)
             db.session.commit()
+
+    def start(self):
+        start_article = StartArticle(site=self.site.title,
+                title=self.title, link=self.link,
+                content=self.content, updated=self.updated)
+        db.session.add(start_article)
+        db.session.commit()
+        app.logger.info("start article %s" % self.title)
+
+
+class StartArticle(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    site = db.Column(db.String(120), nullable=False)
+    title = db.Column(db.String(120), nullable=False)
+    link = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    updated = db.Column(db.DateTime, nullable=False)
+
+    def unstart(self):
+        db.session.delete(self)
+        db.session.commit()
+        app.logger.info("unstart article %s" % self.title)
+
+    def __repr__(self):
+        return "<StartArticle: %s>" % self.title
+
+    def __str__(self):
+        return "<StartArticle: %s>" % self.title

@@ -57,7 +57,7 @@ def timeline():
         'id': item.id} for item in articles]
     article_info = {'length': Article.query.count(), 'show_button_min_length': default_article_num}
     return render_template("timeline.html", article_list=article_list,
-            article_info=article_info)
+            article_info=article_info, sourcelist_link=url_for(".sourcelist"))
 
 @app.route("/timeline/<article_id>")
 def article_view(article_id):
@@ -95,5 +95,26 @@ def load_article(page):
         return jsonify(info=[])
 
 @app.route("/sourcelist/")
+@_login.login_required
 def sourcelist():
-    pass
+    sites = FeedSite.query.all()
+    info = []
+    for s in sites:
+        _dict = {'title': s.title,
+                'updated': s.updated.strftime("%Y-%m-%d")}
+        articles = s.articles
+        article_info = []
+        for a in articles[:3]:
+            article_dict = {'link': "#", 'title': a.title}
+            article_info.append(article_dict)
+        _dict['articles'] = article_info
+        _dict['id'] = s.id
+        info.append(_dict)
+    return render_template("sourcelist.html", source_list=info, sourcelist_link="#")
+
+@app.route("/sourcelist/unsubscribe/<int:site_id>", methods=("POST", ))
+def unsubscribe(site_id):
+    if not _login.current_user.is_authenticated():
+        # redirect to login
+        return unauthorize_response
+
