@@ -3,6 +3,8 @@
     var location = window.location.toString();
     var timeline = new Timeline();
     var sourcelist = new SourceList();
+    var subscribe = new Subscribe();
+    subscribe.handle();
     if (location.indexOf("timeline") !== -1) {
       timeline.handle();
     }
@@ -118,12 +120,72 @@
     }
   };
 
-  function SourceList() {
+  SourceList = function () {
 
   };
 
   SourceList.prototype = {
+    constructor: SourceList,
+
     handle: function() {
+    },
+  };
+
+  Subscribe = function () {
+    this.buttonId = "#subscribe-source";
+    this.modalId = "#subscribe-modal";
+    this.formId = "#new-source-form";
+    this.inputId = "#new-source-site";
+    this.promptId = "#subscribing-prompt";
+    this.confirmId = "#confirm-subscribe";
+    this.cancelId = "#cancel-subscribe";
+
+    this.$button = $(this.buttonId);
+    this.$modal = $(this.modalId);
+    this.$newSourceForm = $(this.formId);
+    this.$input = $(this.inputId);
+    this.$prompt = $(this.promptId);
+    this.$confirmButton = $(this.confirmId);
+    //this.$cancelButton = $(this.cancelId);
+  };
+
+  Subscribe.prototype = {
+    constructor: Subscribe,
+
+    handle: function () {
+      var that = this;
+      this.$button.on('click', function() {
+        that.$modal.modal('show');
+        that.$newSourceForm.show();
+        that.$prompt.hide();
+        that.$input.val("");
+      });
+
+      //this.$cancelButton.on('click', function() {
+      //  console.log("click canel");
+      //  that.$modal.modal('hide');
+      //});
+
+      this.$confirmButton.on('click', function() {
+        site = that.$input.val();
+        if (site) {
+          that.subscribe(site);
+        }
+      });
+
+    },
+
+    subscribe: function (site) {
+      console.log(site);
+      var that = this;
+      this.$newSourceForm.fadeOut(function () {
+        that.$prompt.show();
+        var promptText = that.$prompt.text();
+        console.log(promptText);
+        // disable cancel
+        //that.$cancelButton.click(function () { return false; });
+        // subscribe
+      });
     }
   };
 

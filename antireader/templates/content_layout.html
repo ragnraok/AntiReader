@@ -9,7 +9,7 @@
         <ul>
           <li><a href="{% block sourcelist_link %}{{ sourcelist_link }}{% endblock %}" class="{% block sourcelist_class %}{% endblock %}">源列表</a></li>
           <li class="pure-menu-heading">Setting</li>
-          <li><a href="#"><span class="setting-label-color1"></span>添加订阅</a></li>
+          <li><a href="#" id="subscribe-source"><span class="setting-label-color1"></span>添加订阅</a></li>
           <li><a href="/logout"><span class="setting-label-color2"></span>退出登录</a></li>
         </ul>
       </div>
@@ -18,4 +18,5 @@
   {% block content %}
   {% endblock %}
 </div>
+{% include "subscribe_modal.html" %}
 {% endblock %}
