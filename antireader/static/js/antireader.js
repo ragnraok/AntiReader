@@ -1,4 +1,15 @@
 (function () {
+  // add format method
+  if (!String.prototype.format) {
+    String.prototype.format = function() {
+      var args = arguments;
+      return this.replace(/\{(\d+)\}/g,
+        function(m,i){
+            return args[i];
+        });
+    }
+  }
+
   function handle() {
     var location = window.location.toString();
     var timeline = new Timeline();
@@ -9,7 +20,7 @@
       timeline.handle();
     }
     else if (location.indexOf("sourcelist") != -1) {
-      //sourcelist.handle();
+      sourcelist.handle();
     }
   }
 
@@ -19,6 +30,9 @@
         "<div class=\"article-item pure-g\">",
         "<div class=\"pure-u-3-4\">",
         "<h5 class=\"article-name\"  id={article.id}>{article.name}</h5>",
+        "</div>",
+        "<div class=\"pure-u-3-4\">",
+        "<p class=\"article-source\" id={article.id}>{article.site}</p>",
         "</div>",
         "</div>",
         "</a>"].join("\n");
@@ -51,7 +65,7 @@
         $("#loading-article-prompt").show();
         $target = $(event.target);
         var articleId;
-        if ($target.prop('tagName') == 'DIV') {
+        if ($target.prop('tagName') == 'DIV') { // select the parent div
           articleId = $target.find('.article-name').attr('id');
         }
         else {
@@ -88,18 +102,23 @@
       moreArticleButton.click(function (event) {
         var originText = event.target.innerHTML;
         event.target.innerHTML = "Loading..."
-        var loadUrl = "/timeline/load_articles/" + page + "/";
+        var loadUrl = "/timeline/load_articles/{0}/".format(page);
         $.get(loadUrl, function (data) {
-          info = data.info;
-          lastPage = data.last_page
-          if (lastPage == false) {
-            that.appendArticle(info);
-            event.target.innerHTML = originText;
-            page++;
-          }
-          else {
-            moreArticleButton.hide();
-            $("#no-more-article-prompt").show();
+          if (data.success) {
+            info = data.data.info;
+            lastPage = data.data.last_page
+            if (lastPage == false) {
+              that.appendArticle(info);
+              event.target.innerHTML = originText;
+              page++;
+            }
+            else {
+              if (info) {
+                that.appendArticle(info);
+              }
+              moreArticleButton.hide();
+              $("#no-more-article-prompt").show();
+            }
           }
         });
       });
@@ -111,7 +130,8 @@
         article_info = {
           article:{
             id: articles[i].id,
-            name: articles[i].name
+            name: articles[i].name,
+            site: articles[i].site
           }
         }
         var renderResult = nano(this.moreArticleTmpl, article_info);
@@ -120,15 +140,55 @@
     }
   };
 
-  SourceList = function () {
+  function SourceList () {
+    this.$idList = $(".site-delete");
+    this.$modal = $("#unsubscribe-modal");
+    this.$modalPrompt = $("#unsubscribing-prompt");
+    this.$confirmButton = $("#confirm-unsubscribe");
 
+    this.$modal.modal({
+      keyboard: true,
+      show: false
+    })
+
+    this.unsubscribeUrl = "/sourcelist/unsubscribe/{0}/";
   };
 
   SourceList.prototype = {
     constructor: SourceList,
 
     handle: function() {
+      this.initUnsubscribe();
     },
+
+    initUnsubscribe: function() {
+      var that = this;
+      this.$idList.on('click', function(event) {
+        var $target = $(event.target);
+        var id = $target.attr("id");
+        var $titleBox = $(".site-title").filter("#" + id);
+        var title = $titleBox.text();
+        //console.log("title = " + title);
+
+        var $parentBox = $(".source-grid").filter("#" + id);
+        //console.log($parentBox);
+
+        that.$modalPrompt.text("确认取消订阅 <" + title + "> 吗？");
+        that.$modal.modal('show');
+        that.$confirmButton.on('click', function() {
+          that.$modal.modal('hide');
+          $parentBox.fadeOut();
+
+          // unsubscribe
+          that.unsubscribe(id);
+        });
+      });
+    },
+
+    unsubscribe: function(siteId) {
+      console.log("in unsubscribe");
+      $.post(this.unsubscribeUrl.format(siteId));
+    }
   };
 
   Subscribe = function () {
@@ -147,6 +207,8 @@
     this.$prompt = $(this.promptId);
     this.$confirmButton = $(this.confirmId);
     //this.$cancelButton = $(this.cancelId);
+    //
+    this.subscribeUrl = "/subscribe/";
   };
 
   Subscribe.prototype = {
@@ -155,6 +217,7 @@
     handle: function () {
       var that = this;
       this.$button.on('click', function() {
+        that.$confirmButton.show();
         that.$modal.modal('show');
         that.$newSourceForm.show();
         that.$prompt.hide();
@@ -166,7 +229,7 @@
       //  that.$modal.modal('hide');
       //});
 
-      this.$confirmButton.on('click', function() {
+      this.$confirmButton.click(function() {
         site = that.$input.val();
         if (site) {
           that.subscribe(site);
@@ -176,18 +239,41 @@
     },
 
     subscribe: function (site) {
-      console.log(site);
       var that = this;
       this.$newSourceForm.fadeOut(function () {
         that.$prompt.show();
-        var promptText = that.$prompt.text();
-        console.log(promptText);
-        // disable cancel
-        //that.$cancelButton.click(function () { return false; });
+        that.$confirmButton.hide();
+        //var promptText = that.$prompt.text();
         // subscribe
+        $.post("/subscribe/", {'site': site}, function(data, textStatus, xhr) {
+          console.log(xhr.status);
+          if (xhr.status != 200) {
+            that.$prompt.text('订阅失败');
+            window.setTimeout(function() {
+              that.$modal.modal('hide');
+            }, 2000);
+          }
+          var success = data.success;
+          if (success) {
+            that.$prompt.text('订阅成功');
+            window.setTimeout(function() {
+              that.$modal.modal('hide');
+              if (window.location.toString().indexOf('sourcelist') != -1) {
+                window.location.reload();
+              }
+            }, 2000);
+          }
+          else {
+            that.$prompt.text('订阅失败');
+            window.setTimeout(function() {
+              that.$modal.modal('hide');
+            }, 2000);
+          }
+        }, "json");
       });
     }
   };
+
 
 
   /*

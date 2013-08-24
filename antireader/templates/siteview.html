@@ -6,7 +6,7 @@
     <!-- articles list  -->
     {% for item in article_list %}
     <a class="article-item-link" href="{{ item.link }}">
-      {% if loop.index == 1 %}
+      {% if item.id == selected_id %}
       <div class="article-item pure-g article-item-selected">
       {% else %}
       <div class="article-item pure-g">
@@ -21,17 +21,9 @@
     </a>
     {% endfor %}
   </div>
-  {% if article_info.length > article_info.show_button_min_length %}
-  <div class="load-more-article-box">
-    <a href="#" class="pure-button" id="more-article-prompt">加载更多</a>
-  </div>
-  {% endif %}
-  <p id="no-more-article-prompt">没有更多文章了</p>
 </div>
 <!-- article content -->
 <div class="pure-u" id="main">
-  <div id="loading-article-prompt">
-    <p>Loading...</p>
-  </div>
+  {% include "article_view.html" %}
 </div>
 {% endblock %}

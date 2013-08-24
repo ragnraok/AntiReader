@@ -44,6 +44,16 @@ class FeedSite(db.Model):
         db.session.commit()
         add_update_task(site.id)
 
+    @classmethod
+    def delete_site(cls, id):
+        site = FeedSite.query.get(id)
+        if site:
+            db.session.delete(site)
+            db.session.commit()
+            return True
+        return False
+
+
     def __repr__(self):
         return "<Site: %s>" % (self.title, )
 
@@ -55,11 +65,6 @@ class FeedSite(db.Model):
         new_site = FeedSite(url)
         db.session.add(new_site)
         db.session.delete(new_site)
-
-    @classmethod
-    def delete_site(cls, site):
-        db.session.delete(site)
-        db.session.commit()
 
     @classmethod
     def add_site_list(cls, sites):

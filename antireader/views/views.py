@@ -3,7 +3,7 @@ from flask import Blueprint, g, current_app, redirect, url_for, flash, \
 from flask.ext import login as _login
 from form import LoginForm
 from antireader.models import FeedSite, Article
-from utils import generate_article_link, unauthorize_response, response_html
+from utils import generate_article_link, unauthorize_response, response_html, ajax_response
 from sqlalchemy.sql.expression import desc
 
 app = Blueprint("web", __name__)
@@ -54,7 +54,7 @@ def timeline():
         articles = Article.query.order_by(desc(Article.updated)).all()
     article_list = [{'name': item.title,
         'content': item.content, 'link': "#",
-        'id': item.id} for item in articles]
+        'id': item.id, 'site': item.site.title} for item in articles]
     article_info = {'length': Article.query.count(), 'show_button_min_length': default_article_num}
     return render_template("timeline.html", article_list=article_list,
             article_info=article_info, sourcelist_link=url_for(".sourcelist"))
@@ -82,17 +82,18 @@ def load_article(page):
         articles = Article.query.order_by(desc(Article.updated)).offset(
                 current_app.config['DEFAULT_ARTICLE_SHOW_NUM'] - 1).from_self(
                        ).paginate(page=page, per_page=current_app.config['PER_PAGE_ARTICLE_NUM']).items
+        print len(articles)
         articles_info = []
         for item in articles:
-            _dict = {'name': item.title, 'id': item.id}
+            _dict = {'name': item.title, 'id': item.id, 'site': item.site.title}
             articles_info.append(_dict)
         if len(articles_info) < current_app.config['PER_PAGE_ARTICLE_NUM']:
             last_page = True
         else:
             last_page = False;
-        return jsonify(info=articles_info, last_page=last_page)
+        return ajax_response(success=True, data={'last_page': last_page, 'info': articles_info})
     else:
-        return jsonify(info=[])
+        return ajax_response(success=True, data={'last_page': last_page, 'info': []})
 
 @app.route("/sourcelist/")
 @_login.login_required
@@ -101,20 +102,64 @@ def sourcelist():
     info = []
     for s in sites:
         _dict = {'title': s.title,
-                'updated': s.updated.strftime("%Y-%m-%d")}
+                'updated': s.updated.strftime("%Y-%m-%d"),
+                'link': "/siteview/%d/%d" % (s.id, 0)}
         articles = s.articles
         article_info = []
         for a in articles[:3]:
-            article_dict = {'link': "#", 'title': a.title}
+            article_dict = {'link': generate_article_link(s.id, a.id),
+                    'title': a.title, 'id': a.id}
             article_info.append(article_dict)
         _dict['articles'] = article_info
         _dict['id'] = s.id
         info.append(_dict)
     return render_template("sourcelist.html", source_list=info, sourcelist_link="#")
 
-@app.route("/sourcelist/unsubscribe/<int:site_id>", methods=("POST", ))
+@app.route("/sourcelist/unsubscribe/<int:site_id>/", methods=("POST", ))
 def unsubscribe(site_id):
     if not _login.current_user.is_authenticated():
         # redirect to login
         return unauthorize_response
+    if FeedSite.delete_site(site_id):
+        return ajax_response(success=True)
+    return ajax_response(success=False)
+
+@app.route("/subscribe/", methods=("POST", ))
+def subscribe():
+    url = request.form['site']
+    #print request.get_json(force=True)
+    print url
+    try:
+        FeedSite.create_site(url)
+        return ajax_response(success=True)
+    except:
+        return ajax_response(success=False)
+
+@app.route("/siteview/<int:site_id>/<int:article_id>/")
+def siteview(site_id, article_id):
+    site = FeedSite.query.get(site_id)
+    if site:
+        articles = site.articles.order_by(desc(Article.updated)).all();
+        # construct article_list
+        article_list = []
+        for item in articles:
+            _dict = {'link': generate_article_link(site_id, item.id),
+                    'id': item.id, 'name': item.title, 'site': site.title}
+            article_list.append(_dict)
+
+        if article_id == 0:
+            selected_article_id = articles[0].id
+        else:
+            selected_article_id = article_id
+
+        article = Article.query.get(selected_article_id)
+        if article:
+            article_info = {'title': article.title, 'site_link': site.url,
+                   'source': site.title, 'updated': article.updated.strftime("%Y-%m-%d"),
+                   'content': article.content, 'link': article.link}
+        return render_template('siteview.html',
+                selected_id=selected_article_id,
+                article_list=article_list, article=article_info,
+                sourcelist_link=url_for(".sourcelist"))
+
 

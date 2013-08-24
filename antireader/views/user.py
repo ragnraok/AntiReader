@@ -40,7 +40,6 @@ def init_login(_app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        print "load_user"
         if user_id != reader_user.get_id():
             return None
         else:
