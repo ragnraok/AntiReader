@@ -78,7 +78,11 @@ class FeedData(object):
                         """
                         return datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
                     except:
-                        return None
+                        """
+                        may be in this format timestr[:24]:
+                            Tue Aug 20 2013 04:04:46
+                        """
+                        return datetime.datetime.strptime(timestr[:24], "%a %b %d %Y %H:%M:%S")
 
         elif 'atom' in version:
             """
