@@ -46,7 +46,11 @@ class FeedData(object):
             timestr = self.parser['channel']['published']
             version = self.parser.version
             #print "timestr = %s" % timestr
-            return self.__parse_timestr(version, timestr, self.site)
+            try:
+                updated = self.__parse_timestr(version, timestr, self.site)
+                return updated
+            except:
+                return None
         else:
             #print "timestr is None"
             return None
@@ -67,11 +71,15 @@ class FeedData(object):
                 elif '163.com' in url:
                     return datetime.datetime.strptime(timestr[:19], "%Y-%m-%dT%H:%M:%S")
                 else:
-                    """
-                    in this format:
-                        %Y-%m-%d %H:%M:%S
-                    """
-                    return datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+                    try:
+                        """
+                        in this format:
+                            %Y-%m-%d %H:%M:%S
+                        """
+                        return datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+                    except:
+                        return None
+
         elif 'atom' in version:
             """
             for general situation

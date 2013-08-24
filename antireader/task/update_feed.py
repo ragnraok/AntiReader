@@ -41,8 +41,6 @@ if __name__ == '__main__':
     from antireader.models import FeedSite
     sites = FeedSite.query.all()
     id_list = [s.id for s in sites]
+    print id_list
     for i in id_list:
-        try:
-            update_feed(i)
-        except:
-            continue
+        update_feed(i)
