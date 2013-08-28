@@ -3,9 +3,10 @@
   <div class="article-content pure-g">
     <div class="article-content-header pure-g">
       <div class="pure-u-1">
-        <h1 class="article-content-title">{{ article.title  }}</h1>
+        <h1 class="article-content-title"  id="{{ article.id }}">{{ article.title  }}</h1>
         <p class="article-content-subtitle">
           来源:<a href="{{ article.site_link }}" class="article-author" target="_blank">{{ article.source|safe }}</a>   日期:<span class="article-updated">{{ article.updated|safe }}</span>
+          <a class="star-article" href="#">{{ article.star_prompt }}</a>
         </p>
       </div>
     </div>

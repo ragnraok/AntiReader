@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import Blueprint, g, current_app, redirect, url_for, flash, \
     request, render_template, jsonify
 from flask.ext import login as _login
@@ -59,7 +60,7 @@ def timeline():
     return render_template("timeline.html", article_list=article_list,
             article_info=article_info, sourcelist_link=url_for(".sourcelist"))
 
-@app.route("/timeline/<article_id>")
+@app.route("/load_article/<int:article_id>/")
 def article_view(article_id):
     if not _login.current_user.is_authenticated():
         # redirect to login
@@ -68,7 +69,8 @@ def article_view(article_id):
     if article:
         article_info = {'title': article.title, 'source': article.site.title, 'content': article.content,
                 'link': article.link, 'updated': article.updated.strftime("%Y-%m-%d"),
-                'site_link': article.site.url}
+                'site_link': article.site.url, 'id': article.id,
+                'start_prompt': article.is_start() and '取消收藏'.decode('utf8') or '收藏'.decode('utf8')}
         return render_template("article_view.html", article=article_info)
     else:
         return None
@@ -135,31 +137,57 @@ def subscribe():
     except:
         return ajax_response(success=False)
 
-@app.route("/siteview/<int:site_id>/<int:article_id>/")
-def siteview(site_id, article_id):
+@app.route("/siteview/<int:site_id>/")
+def siteview(site_id):
     site = FeedSite.query.get(site_id)
     if site:
         articles = site.articles.order_by(desc(Article.updated)).all();
         # construct article_list
         article_list = []
         for item in articles:
-            _dict = {'link': generate_article_link(site_id, item.id),
-                    'id': item.id, 'name': item.title, 'site': site.title}
+            _dict = {'id': item.id, 'name': item.title, 'site': site.title}
             article_list.append(_dict)
-
-        if article_id == 0:
-            selected_article_id = articles[0].id
-        else:
-            selected_article_id = article_id
-
-        article = Article.query.get(selected_article_id)
-        if article:
-            article_info = {'title': article.title, 'site_link': site.url,
-                   'source': site.title, 'updated': article.updated.strftime("%Y-%m-%d"),
-                   'content': article.content, 'link': article.link}
-        return render_template('siteview.html',
-                selected_id=selected_article_id,
-                article_list=article_list, article=article_info,
+        return render_template('siteview.html', article_list=article_list,
                 sourcelist_link=url_for(".sourcelist"))
 
+        #if article_id == 0:
+        #    selected_article_id = articles[0].id
+        #else:
+        #    selected_article_id = article_id
 
+        #article = Article.query.get(selected_article_id)
+        #if article:
+        #    article_info = {'title': article.title, 'site_link': site.url,
+        #           'source': site.title, 'updated': article.updated.strftime("%Y-%m-%d"),
+        #           'content': article.content, 'link': article.link}
+        #return render_template('siteview.html',
+        #        selected_id=selected_article_id,
+        #        article_list=article_list, article=article_info,
+        #        sourcelist_link=url_for(".sourcelist"))
+
+
+#@app.route("/start_article/<int:article_id>/", methods=("POST", ))
+#def start_article(article_id):
+#    pass
+#
+#@app.route("/unstart_article/<int:start_article_id>/", methods=("POST", ))
+#def unstart_article(start_article_id):
+#    pass
+
+@app.route("/toggle_star_article/<int:article_id>/", methods=('POST', ))
+def toggle_star_article(article_id):
+    article = Article.query.get(article_id)
+    if article:
+        if article.is_star():
+            start_article = StarArticle.get_from_article(article.title)
+            start_article.unstar()
+            return ajax_response(success=True, data={'star': 'unstar'})
+        else:
+            article.star()
+            return ajax_response(success=True, data={'star': 'star'})
+    return ajax_response(success=False)
+
+
+@app.route("/fav_article_list/")
+def fav_articles_list():
+    pass

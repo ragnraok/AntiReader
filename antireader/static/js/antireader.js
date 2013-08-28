@@ -12,15 +12,19 @@
 
   function handle() {
     var location = window.location.toString();
-    var timeline = new Timeline();
-    var sourcelist = new SourceList();
     var subscribe = new Subscribe();
     subscribe.handle();
     if (location.indexOf("timeline") !== -1) {
+      var timeline = new Timeline();
       timeline.handle();
     }
     else if (location.indexOf("sourcelist") != -1) {
+      var sourcelist = new SourceList();
       sourcelist.handle();
+    }
+    else if (location.indexOf("siteview") != -1) {
+      var siteview = new SiteView();
+      siteview.handle();
     }
   }
 
@@ -36,6 +40,7 @@
         "</div>",
         "</div>",
         "</a>"].join("\n");
+    this.loadArticleUrl = "/load_article/{0}/";
   };
 
   Timeline.prototype = {
@@ -52,7 +57,7 @@
       var $articleContainer = $('#main');
       var $articleItem = $('.article-name').first();
       var articleId = $articleItem.attr('id');
-      $articleContainer.load("/timeline/" + articleId);
+      $articleContainer.load(this.loadArticleUrl.format(articleId));
       this.updateTimelineBoxClass(articleId);
     },
 
@@ -72,7 +77,7 @@
           articleId = $target.attr('id');
         }
         if (articleId) {
-          $articleContainer.load("/timeline/" + articleId, function () {
+          $articleContainer.load(that.loadArticleUrl.format(articleId), function () {
             $("#loading-article-prompt").hide();
             that.updateTimelineBoxClass(articleId);
           });
@@ -152,6 +157,10 @@
     })
 
     this.unsubscribeUrl = "/sourcelist/unsubscribe/{0}/";
+
+    this.$siteTitle = $(".site-title");
+    this.$siteLastesItem = $(".site-lastest-articles-item");
+    this.siteviewUrl = "/siteview/{0}/";
   };
 
   SourceList.prototype = {
@@ -159,6 +168,7 @@
 
     handle: function() {
       this.initUnsubscribe();
+      this.initGotoSiteView();
     },
 
     initUnsubscribe: function() {
@@ -188,6 +198,28 @@
     unsubscribe: function(siteId) {
       console.log("in unsubscribe");
       $.post(this.unsubscribeUrl.format(siteId));
+    },
+
+    initGotoSiteView: function () {
+      var that = this;
+      this.$siteLastesItem.on('click', function(event) {
+        var target = $(event.target);
+        var articleId = target.attr("id");
+        var siteBox = target.parentsUntil(".source-grid").find(".site-title");
+        var siteId = siteBox.attr("id");
+        // set the window.name
+        window.name = siteId + ":" + articleId;
+
+        window.location = that.siteviewUrl.format(siteId);
+      });
+
+      this.$siteTitle.on('click', function(event) {
+        var target = $(event.target).parent();
+        var siteId = target.attr("id");
+        // set the cookie
+        window.name = siteId + ":" + "";
+        window.location = that.siteviewUrl.format(siteId);
+      });
     }
   };
 
@@ -246,7 +278,7 @@
         //var promptText = that.$prompt.text();
         // subscribe
         $.post("/subscribe/", {'site': site}, function(data, textStatus, xhr) {
-          console.log(xhr.status);
+          //console.log(xhr.status);
           if (xhr.status != 200) {
             that.$prompt.text('订阅失败');
             window.setTimeout(function() {
@@ -274,6 +306,116 @@
     }
   };
 
+  function SiteView () {
+
+    this.$articleContainer = $('#main');
+    var $firstArticleItem = $('.article-name').first();
+    this.$allItem = $(".article-item");
+    this.$articleItem = $(".article-item-link");
+    this.$articleList = $("#article-list");
+    this.$loadingPrompt = $("#loading-article-prompt")
+    this.firstArticleId = $firstArticleItem.attr("id");
+    this.loadArticleUrl = "/load_article/{0}/";
+
+  };
+
+  SiteView.prototype = {
+    constructor: SiteView,
+
+    handle: function () {
+      this.loadDefaultArticle();
+      this.initLoadArticle();
+    },
+
+    loadDefaultArticle: function () {
+      var arr = window.name.toString().split(":");
+      window.name = "";
+      this.siteId = arr[0];
+      this.articleId = arr[1];
+      console.log(this.siteId, this.articleId);
+      if (this.articleId) {
+        this.$articleContainer.load(this.loadArticleUrl.format(this.articleId));
+        this.updateTimelineBoxClass(this.articleId);
+      }
+      else {
+        // load the first article
+        this.$articleContainer.load(this.loadArticleUrl.format(this.firstArticleId));
+        this.updateTimelineBoxClass(this.firstArticleId);
+      }
+    },
+
+    initLoadArticle: function () {
+      var that = this;
+      this.$articleList.delegate(".article-item-link", "click", function (event) {
+        event.stopPropagation();
+        that.$loadingPrompt.show();
+        $target = $(event.target);
+        var articleId;
+        if ($target.prop('tagName') == 'DIV') { // select the parent div
+          articleId = $target.find('.article-name').attr('id');
+        }
+        else {
+          articleId = $target.attr('id');
+        }
+        if (articleId) {
+          that.$articleContainer.load(that.loadArticleUrl.format(articleId), function () {
+            that.$loadingPrompt.hide();
+            that.updateTimelineBoxClass(articleId);
+          });
+        }
+      });
+    },
+
+    updateTimelineBoxClass: function (articleId) {
+      this.$allItem.each(function (index, element) {
+        element = $(element);
+        var $articleName = element.find(".article-name");
+        var id = $articleName.attr("id");
+        if (id === articleId) {
+          element.addClass("article-item-selected");
+        }
+        else {
+          element.removeClass("article-item-selected");
+        }
+      });
+    }
+  };
+
+  function StartArticle () {
+    this.starText = "收藏";
+    this.unstarText = "取消收藏";
+
+    this.toggleStarUrl = "/toggle_star_article/{0}/";
+    this.$starArticle = $(".start-article");
+    this.articleHeaderBox = ".article-content-header";
+    this.articleTitleBox = ".article-content-title";
+  };
+
+  StartArticle.prototype = {
+    constructor: StartArticle,
+
+    handle: function () {
+    },
+
+    initStartUnstart: function () {
+      var that = this;
+      this.$starArticle.on('click', function(event)) {
+        var $target = $(event.target);
+        var $articleTitleBox = $target.parentsUntil(
+          that.articleHeaderBox).find(that.articleTitleBox);
+        var articleTitle = $articleTitleBox.text();
+        var articleId = $articleTitleBox.attr("id");
+        toggleStart(articleId, $target);
+      }
+    },
+
+    toggleStar: function (articleId, startPromptBox) {
+      var that = this;
+      $.post(this.toggleStarUrl.format(articleId), function (data, textStatus, xhr) {
+      });
+    }
+
+  };
 
 
   /*

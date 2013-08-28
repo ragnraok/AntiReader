@@ -114,27 +114,46 @@ class Article(db.Model):
                 db.session.add(articles)
             db.session.commit()
 
-    def start(self):
-        start_article = StartArticle(site=self.site.title,
+    def star(self):
+        star_article = StarArticle(site=self.site.title,
                 title=self.title, link=self.link,
                 content=self.content, updated=self.updated)
-        db.session.add(start_article)
+        db.session.add(star_article)
         db.session.commit()
         app.logger.info("start article %s" % self.title)
 
+    def is_star(self):
+        if hasattr(self, '_is_star'):
+            return self._is_star
+        if len(StartArticle.query.filter_by(title=self.title).all()) > 0:
+            self._is_star = True
+        else:
+            self._is_star = False
+        return self._is_star
 
-class StartArticle(db.Model):
+
+
+class StarArticle(db.Model):
+    __tablename__ = 'stararticle'
+
     id = db.Column(db.Integer, primary_key=True)
     site = db.Column(db.String(120), nullable=False)
-    title = db.Column(db.String(120), nullable=False)
-    link = db.Column(db.String(200), nullable=False)
+    title = db.Column(db.String(120), nullable=False, unique=True)
+    link = db.Column(db.String(200), nullable=False, unique=True)
     content = db.Column(db.Text, nullable=False)
     updated = db.Column(db.DateTime, nullable=False)
 
-    def unstart(self):
+    def unstar(self):
         db.session.delete(self)
         db.session.commit()
-        app.logger.info("unstart article %s" % self.title)
+        app.logger.info("unstar article %s" % self.title)
+
+    @classmethod
+    def get_from_article(title):
+        article = StarArticle.query.filter_by(title=title).all()
+        if len(article) > 0:
+            return article[0]
+        return None
 
     def __repr__(self):
         return "<StartArticle: %s>" % self.title

@@ -22,7 +22,7 @@ a,
 a:hover,
 a:focus{
   text-decoration: none;
-  color: inherit;
+  color: #388E8E;
 }
 
 pre, code {
@@ -176,6 +176,8 @@ code:focus {
   text-align: left;
 }
 
+.nav .pure-menu a {
+}
 .nav .pure-menu a:hover,
 .nav .pure-menu a:focus {
   background: rgb(55, 60, 90);
@@ -449,4 +451,13 @@ code:focus {
 }
 #subscribing-prompt {
   display: none;
+}
+.start-article {
+  position: absolute;
+  right: 30px;
+  font-size: 15px;
+}
+.start-article:hover,
+.start-article:focus {
+  color: gray;
 }

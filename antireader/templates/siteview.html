@@ -5,12 +5,16 @@
   <div class="content" id="article-list">
     <!-- articles list  -->
     {% for item in article_list %}
-    <a class="article-item-link" href="{{ item.link }}">
+    <a class="article-item-link" href="#">
+      <!--
       {% if item.id == selected_id %}
       <div class="article-item pure-g article-item-selected">
       {% else %}
+      -->
       <div class="article-item pure-g">
+      <!--
       {% endif %}
+      -->
         <div class="pure-u-3-4">
           <h5 class="article-name"  id={{ item.id }}>{{ item.name|safe }}</h5>
         </div>
@@ -24,6 +28,8 @@
 </div>
 <!-- article content -->
 <div class="pure-u" id="main">
-  {% include "article_view.html" %}
+  <div id="loading-article-prompt">
+    <p>Loading...</p>
+  </div>
 </div>
 {% endblock %}
