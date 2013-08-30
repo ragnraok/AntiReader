@@ -15,7 +15,8 @@
     var subscribe = new Subscribe();
     subscribe.handle();
     if (location.indexOf("timeline") !== -1) {
-      var timeline = new Timeline();
+      var timeline = new ArticleListView('/timeline/load_articles/{0}/',
+                                        '/load_article/{0}/');
       timeline.handle();
     }
     else if (location.indexOf("sourcelist") != -1) {
@@ -26,9 +27,14 @@
       var siteview = new SiteView();
       siteview.handle();
     }
+    else if (location.indexOf('fav_article_list') != -1) {
+      var articleListView = new ArticleListView('/fav_article_list/load_articles/{0}/',
+                                               '/load_fav_article/{0}/');
+      articleListView.handle();
+    }
   }
 
-  function Timeline() {
+  function ArticleListView(addMoreArticleUrl, loadArticleUrl) {
     this.moreArticleTmpl =
       ["<a class=\"article-item-link\" href=\"#\">",
         "<div class=\"article-item pure-g\">",
@@ -40,11 +46,12 @@
         "</div>",
         "</div>",
         "</a>"].join("\n");
-    this.loadArticleUrl = "/load_article/{0}/";
+    this.loadArticleUrl = loadArticleUrl;
+    this.appendArticlesUrl = addMoreArticleUrl;
   };
 
-  Timeline.prototype = {
-    constructor: Timeline,
+  ArticleListView.prototype = {
+    constructor: ArticleListView,
 
     handle: function () {
       this.loadDefaultArticle();
@@ -57,8 +64,12 @@
       var $articleContainer = $('#main');
       var $articleItem = $('.article-name').first();
       var articleId = $articleItem.attr('id');
-      $articleContainer.load(this.loadArticleUrl.format(articleId));
+      $articleContainer.load(this.loadArticleUrl.format(articleId), function() {
+        var starArticle = new StarArticle();
+        starArticle.handle();
+      });
       this.updateTimelineBoxClass(articleId);
+
     },
 
     initLoadArticle: function () {
@@ -78,6 +89,8 @@
         }
         if (articleId) {
           $articleContainer.load(that.loadArticleUrl.format(articleId), function () {
+            var starArticle = new StarArticle();
+            starArticle.handle();
             $("#loading-article-prompt").hide();
             that.updateTimelineBoxClass(articleId);
           });
@@ -107,8 +120,7 @@
       moreArticleButton.click(function (event) {
         var originText = event.target.innerHTML;
         event.target.innerHTML = "Loading..."
-        var loadUrl = "/timeline/load_articles/{0}/".format(page);
-        $.get(loadUrl, function (data) {
+        $.get(that.appendArticlesUrl.format(page), function (data) {
           if (data.success) {
             info = data.data.info;
             lastPage = data.data.last_page
@@ -334,12 +346,18 @@
       this.articleId = arr[1];
       console.log(this.siteId, this.articleId);
       if (this.articleId) {
-        this.$articleContainer.load(this.loadArticleUrl.format(this.articleId));
+        this.$articleContainer.load(this.loadArticleUrl.format(this.articleId), function () {
+          var starArticle = new StarArticle();
+          starArticle.handle();
+        });
         this.updateTimelineBoxClass(this.articleId);
       }
       else {
         // load the first article
-        this.$articleContainer.load(this.loadArticleUrl.format(this.firstArticleId));
+        this.$articleContainer.load(this.loadArticleUrl.format(this.firstArticleId), function () {
+          var starArticle = new StarArticle();
+          starArticle.handle();
+        });
         this.updateTimelineBoxClass(this.firstArticleId);
       }
     },
@@ -359,6 +377,8 @@
         }
         if (articleId) {
           that.$articleContainer.load(that.loadArticleUrl.format(articleId), function () {
+            var starArticle = new StarArticle();
+            starArticle.handle();
             that.$loadingPrompt.hide();
             that.updateTimelineBoxClass(articleId);
           });
@@ -381,37 +401,62 @@
     }
   };
 
-  function StartArticle () {
+  function StarArticle () {
     this.starText = "收藏";
     this.unstarText = "取消收藏";
 
-    this.toggleStarUrl = "/toggle_star_article/{0}/";
-    this.$starArticle = $(".start-article");
+    this.toggleStarUrl = "/toggle_star_article/{0}/{1}";
+    this.$starArticle = $(".star-article");
     this.articleHeaderBox = ".article-content-header";
     this.articleTitleBox = ".article-content-title";
   };
 
-  StartArticle.prototype = {
-    constructor: StartArticle,
+  StarArticle.prototype = {
+    constructor: StarArticle,
 
     handle: function () {
+      this.initStarUnstar();
     },
 
-    initStartUnstart: function () {
+    initStarUnstar: function () {
       var that = this;
-      this.$starArticle.on('click', function(event)) {
+      this.$starArticle.on('click', function(event) {
         var $target = $(event.target);
         var $articleTitleBox = $target.parentsUntil(
           that.articleHeaderBox).find(that.articleTitleBox);
         var articleTitle = $articleTitleBox.text();
         var articleId = $articleTitleBox.attr("id");
-        toggleStart(articleId, $target);
-      }
+        that.toggleStar(articleId, $target);
+      });
     },
 
-    toggleStar: function (articleId, startPromptBox) {
+    toggleStar: function (articleId, starPromptBox) {
       var that = this;
-      $.post(this.toggleStarUrl.format(articleId), function (data, textStatus, xhr) {
+      var location = window.location.toString();
+      var mode;
+      if (location.indexOf('siteview') != -1
+          || location.indexOf('timeline') != -1) {
+            mode = 0;
+      }
+      else if (location.indexOf('fav_article_list') != -1) {
+        mode = 1;
+      }
+      $.post(this.toggleStarUrl.format(articleId, mode), function (data, textStatus, xhr) {
+        var success = data.success;
+        console.log("success = " + success);
+        if (success) {
+          star = data.data.star
+          console.log("star = " + star);
+          if (star) {
+            starPromptBox.text(that.unstarText);
+          }
+          else {
+            starPromptBox.text(that.starText);
+          }
+          if (location.indexOf('fav_article_list') != -1) {
+            window.location.reload();
+          }
+        }
       });
     }
 

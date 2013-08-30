@@ -125,7 +125,7 @@ class Article(db.Model):
     def is_star(self):
         if hasattr(self, '_is_star'):
             return self._is_star
-        if len(StartArticle.query.filter_by(title=self.title).all()) > 0:
+        if len(StarArticle.query.filter_by(title=self.title).all()) > 0:
             self._is_star = True
         else:
             self._is_star = False
@@ -149,7 +149,7 @@ class StarArticle(db.Model):
         app.logger.info("unstar article %s" % self.title)
 
     @classmethod
-    def get_from_article(title):
+    def get_from_article(cls, title):
         article = StarArticle.query.filter_by(title=title).all()
         if len(article) > 0:
             return article[0]

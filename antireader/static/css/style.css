@@ -452,12 +452,12 @@ code:focus {
 #subscribing-prompt {
   display: none;
 }
-.start-article {
+.star-article {
   position: absolute;
   right: 30px;
   font-size: 15px;
 }
-.start-article:hover,
-.start-article:focus {
+.star-article:hover,
+.star-article:focus {
   color: gray;
 }
