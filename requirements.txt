@@ -3,6 +3,7 @@ Flask-SQLAlchemy
 Flask-Script
 Flask-Admin
 Flask-Login
+Flask-WTF
 apscheduler
 rq
 feedparser

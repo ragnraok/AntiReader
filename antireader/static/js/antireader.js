@@ -443,10 +443,8 @@
       }
       $.post(this.toggleStarUrl.format(articleId, mode), function (data, textStatus, xhr) {
         var success = data.success;
-        console.log("success = " + success);
         if (success) {
           star = data.data.star
-          console.log("star = " + star);
           if (star) {
             starPromptBox.text(that.unstarText);
           }

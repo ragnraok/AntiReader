@@ -23,9 +23,7 @@ def login():
     form = LoginForm(request.form)
     print form.username.data
     if form.validate_on_submit():
-        print "success submit form"
         user = form.get_user(current_app)
-        print "user = %s" % str(user)
         if user is None:
             flash("Invalid user")
             return render_template("login.html", form=form)
@@ -35,7 +33,6 @@ def login():
         # success login user
         _login.login_user(user, remember=True)
         return redirect(url_for(".timeline"))
-    print "fail to submit form"
     return render_template("login.html", form=form)
 
 @app.route("/logout/", methods=("GET", ))
