@@ -23,12 +23,12 @@ def create_test_data():
 
 @manager.shell
 def make_shell():
-    from antireader.models import FeedSite, Article, StartArticle
+    from antireader.models import FeedSite, Article, StarArticle
     return dict(
             app=app,
             FeedSite=FeedSite,
             Article=Article,
-            StartArticle=StartArticle,
+            StarArticle=StarArticle,
             use_bpython=True,
             db=db
             )
