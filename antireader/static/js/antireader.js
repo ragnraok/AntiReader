@@ -61,30 +61,31 @@
     },
 
     loadDefaultArticle: function () {
-      var $articleContainer = $('#main');
-      $articleContainer.html("");
-      $("#loading-article-prompt").show();
+      var $articleContainer = $("#article-container");
+      $articleContainer.hide();
+      var $loadingPrompt = $("#loading-article-prompt");
+      $loadingPrompt.show();
       var $articleItem = $('.article-name').first();
       var articleId = $articleItem.attr('id');
       $articleContainer.load(this.loadArticleUrl.format(articleId), function() {
         var starArticle = new StarArticle();
         starArticle.handle();
-        $("#loading-article-prompt").hide();
+        $articleContainer.show();
+        $loadingPrompt.hide();
       });
       this.updateTimelineBoxClass(articleId);
 
     },
 
     initLoadArticle: function () {
-      var $articleContainer = $("#main");
+      var $articleContainer = $("#article-container");
       var $articleItem = $(".article-item-link");
       var that = this;
       $("#article-list").delegate(".article-item-link", "click", function (event) {
         event.stopPropagation();
-	var loadingPrompt = $("#loading-article-prompt");
-        //$articleContainer.html("");
-	//$articleContainer.append(loadingPrompt);
-        loadingPrompt.show();
+	      var $loadingPrompt = $("#loading-article-prompt");
+        $articleContainer.hide();
+        $loadingPrompt.show();
         $target = $(event.target);
         var articleId;
         if ($target.prop('tagName') == 'DIV') { // select the parent div
@@ -97,7 +98,8 @@
           $articleContainer.load(that.loadArticleUrl.format(articleId), function () {
             var starArticle = new StarArticle();
             starArticle.handle();
-            $("#loading-article-prompt").hide();
+            $loadingPrompt.hide();
+            $articleContainer.show();
           });
           that.updateTimelineBoxClass(articleId);
         }
