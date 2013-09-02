@@ -15,7 +15,7 @@
               <ul class="site-lastest-articles-list">
                 {% for i in item.articles %}
                 <li class="site-lastest-articles-item">
-                  <a href="#" id={{ i.id }}>{{ i.title|truncate(15, True)|safe }}</a>
+                  <a href="#" id={{ i.id }}>{{ i.title|truncate(12, True)|safe }}</a>
                 </li>
                 {% endfor %}
               </ul>
