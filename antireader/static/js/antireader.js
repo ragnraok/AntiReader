@@ -83,9 +83,6 @@
       var that = this;
       $("#article-list").delegate(".article-item-link", "click", function (event) {
         event.stopPropagation();
-	      var $loadingPrompt = $("#loading-article-prompt");
-        $articleContainer.hide();
-        $loadingPrompt.show();
         $target = $(event.target);
         var articleId;
         if ($target.prop('tagName') == 'DIV') { // select the parent div
@@ -95,6 +92,9 @@
           articleId = $target.attr('id');
         }
         if (articleId) {
+          var $loadingPrompt = $("#loading-article-prompt");
+          $articleContainer.hide();
+          $loadingPrompt.show();
           $articleContainer.load(that.loadArticleUrl.format(articleId), function () {
             var starArticle = new StarArticle();
             starArticle.handle();
