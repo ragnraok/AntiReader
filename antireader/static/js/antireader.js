@@ -62,11 +62,14 @@
 
     loadDefaultArticle: function () {
       var $articleContainer = $('#main');
+      $articleContainer.html("");
+      $("#loading-article-prompt").show();
       var $articleItem = $('.article-name').first();
       var articleId = $articleItem.attr('id');
       $articleContainer.load(this.loadArticleUrl.format(articleId), function() {
         var starArticle = new StarArticle();
         starArticle.handle();
+        $("#loading-article-prompt").hide();
       });
       this.updateTimelineBoxClass(articleId);
 
@@ -78,6 +81,7 @@
       var that = this;
       $("#article-list").delegate(".article-item-link", "click", function (event) {
         event.stopPropagation();
+        $articleContainer.html("");
         $("#loading-article-prompt").show();
         $target = $(event.target);
         var articleId;
@@ -92,8 +96,8 @@
             var starArticle = new StarArticle();
             starArticle.handle();
             $("#loading-article-prompt").hide();
-            that.updateTimelineBoxClass(articleId);
           });
+          that.updateTimelineBoxClass(articleId);
         }
       });
     },
