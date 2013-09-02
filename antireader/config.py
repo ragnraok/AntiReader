@@ -11,7 +11,7 @@ TASK_LOG_FILE = "antireader_task.log"
 SECRET_KEY = "PtV9ua4oSBknM5GbTLNQ"
 DEFAULT_ARTICLE_SHOW_NUM = 30
 PER_PAGE_ARTICLE_NUM = 10
-SQLALCHEMY_ECHO = False
+SQLALCHEMY_ECHO = True
 
 """
 database setting
