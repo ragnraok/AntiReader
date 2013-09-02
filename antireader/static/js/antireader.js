@@ -81,8 +81,10 @@
       var that = this;
       $("#article-list").delegate(".article-item-link", "click", function (event) {
         event.stopPropagation();
-        $articleContainer.html("");
-        $("#loading-article-prompt").show();
+	var loadingPrompt = $("#loading-article-prompt");
+        //$articleContainer.html("");
+	//$articleContainer.append(loadingPrompt);
+        loadingPrompt.show();
         $target = $(event.target);
         var articleId;
         if ($target.prop('tagName') == 'DIV') { // select the parent div
