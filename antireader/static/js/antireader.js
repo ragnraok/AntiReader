@@ -328,7 +328,7 @@
 
   function SiteView () {
 
-    this.$articleContainer = $('#main');
+    this.$articleContainer = $('#article-container');
     var $firstArticleItem = $('.article-name').first();
     this.$allItem = $(".article-item");
     this.$articleItem = $(".article-item-link");
@@ -353,10 +353,15 @@
       this.siteId = arr[0];
       this.articleId = arr[1];
       console.log(this.siteId, this.articleId);
+      this.$articleContainer.hide();
+      this.$loadingPrompt.show();
+      var that = this;
       if (this.articleId) {
         this.$articleContainer.load(this.loadArticleUrl.format(this.articleId), function () {
           var starArticle = new StarArticle();
           starArticle.handle();
+          that.$loadingPrompt.hide();
+          that.$articleContainer.show();
         });
         this.updateTimelineBoxClass(this.articleId);
       }
@@ -365,6 +370,8 @@
         this.$articleContainer.load(this.loadArticleUrl.format(this.firstArticleId), function () {
           var starArticle = new StarArticle();
           starArticle.handle();
+          that.$loadingPrompt.hide();
+          that.$articleContainer.show();
         });
         this.updateTimelineBoxClass(this.firstArticleId);
       }
@@ -374,7 +381,6 @@
       var that = this;
       this.$articleList.delegate(".article-item-link", "click", function (event) {
         event.stopPropagation();
-        that.$loadingPrompt.show();
         $target = $(event.target);
         var articleId;
         if ($target.prop('tagName') == 'DIV') { // select the parent div
@@ -384,9 +390,12 @@
           articleId = $target.attr('id');
         }
         if (articleId) {
+          that.$articleContainer.hide();
+          that.$loadingPrompt.show();
           that.$articleContainer.load(that.loadArticleUrl.format(articleId), function () {
             var starArticle = new StarArticle();
             starArticle.handle();
+            that.$articleContainer.show();
             that.$loadingPrompt.hide();
             that.updateTimelineBoxClass(articleId);
           });
