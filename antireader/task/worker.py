@@ -18,7 +18,7 @@ def add_update_task(site_id):
     app.logger.info('update task for id %d enqueue' % site_id)
     queue.enqueue(update_feed, site_id)
 
-if __name__ == '__main__':
+def start_worker():
     with Connection(conn):
         worker = Worker(queues=queue)
         worker.work()

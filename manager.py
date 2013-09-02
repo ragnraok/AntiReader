@@ -17,27 +17,39 @@ def dropdb():
 
 @manager.command
 def create_test_data():
+    from antireader.models import FeedSite
     test_site = FeedSite('http://coolshell.cn/')
     db.session.add(test_site)
     db.session.commit()
 
+@manager.command
+def clock():
+    from antireader.task import start_clock
+    start_clock()
+
+@manager.command
+def worker():
+   from antireader.task import start_worker
+   start_worker()
+
 @manager.shell
 def make_shell():
-    from antireader.models import FeedSite, Article, StartArticle
+    from antireader.models import FeedSite, Article, StarArticle
     return dict(
             app=app,
             FeedSite=FeedSite,
             Article=Article,
-            StartArticle=StartArticle,
+            StarArticle=StarArticle,
             use_bpython=True,
             db=db
             )
+
 
 class GunicornServer(Command):
 
     description = 'Run the app within Gunicorn'
 
-    def __init__(self, port=5000, host='0.0.0.0', workers=4):
+    def __init__(self, port=5000, host='127.0.0.1', workers=4):
         self.port = port
         self.host = host
         self.workers = workers
