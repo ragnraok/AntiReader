@@ -27,7 +27,7 @@ a:focus{
 
 pre, code {
   background-color: #F0FFF0;
-  font-family: ubuntu, monospace;
+  font-family: Consolas, ubuntu, monospace;
 }
 
 pre {
