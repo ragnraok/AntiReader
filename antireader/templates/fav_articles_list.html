@@ -1,6 +1,6 @@
 {% extends "content_layout.html" %}
 {% block layout_id %}layout{% endblock %}
-{% block start_articles_class %}list-selected{% endblock %}
+{% block star_articles_class %}list-selected{% endblock %}
 {% block content %}
 <div class="pure-u" id="list">
   <div class="content" id="article-list">
@@ -31,6 +31,8 @@
 </div>
 <!-- article content -->
 <div class="pure-u" id="main">
+  <div id="article-container">
+  </div>
   <div id="loading-article-prompt">
     <p>Loading...</p>
   </div>

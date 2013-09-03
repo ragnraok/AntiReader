@@ -227,18 +227,22 @@
         var articleId = target.attr("id");
         var siteBox = target.parentsUntil(".source-grid").find(".site-title");
         var siteId = siteBox.attr("id");
-        // set the window.name
-        window.name = siteId + ":" + articleId;
+        if (siteId && articleId) {
+          // set the window.name
+          window.name = siteId + ":" + articleId;
 
-        window.location = that.siteviewUrl.format(siteId);
+          window.location = that.siteviewUrl.format(siteId);
+        }
       });
 
       this.$siteTitle.on('click', function(event) {
         var target = $(event.target).parent();
         var siteId = target.attr("id");
-        // set the cookie
-        window.name = siteId + ":" + "";
-        window.location = that.siteviewUrl.format(siteId);
+        if (siteId) {
+          // set the cookie
+          window.name = siteId + ":" + "";
+          window.location = that.siteviewUrl.format(siteId);
+        }
       });
     }
   };
@@ -397,8 +401,8 @@
             starArticle.handle();
             that.$articleContainer.show();
             that.$loadingPrompt.hide();
-            that.updateTimelineBoxClass(articleId);
           });
+          that.updateTimelineBoxClass(articleId);
         }
       });
     },
