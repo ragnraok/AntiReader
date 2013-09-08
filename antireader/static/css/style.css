@@ -48,12 +48,15 @@ code {
   margin: 2px 5px;
   font-size: 0.8em;
   padding: 2px;
-  white-space: nowrap;
 }
 
 code:hover,
 code:focus {
   background: none;
+}
+
+pre code {
+  border: none;
 }
 
 .header img {
