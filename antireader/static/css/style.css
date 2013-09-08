@@ -43,6 +43,7 @@ pre:focus {
 }
 
 code {
+  background-color: none;
   border: 1px dotted #EEE0E5;
   border-radius: 5px;
   margin: 2px 5px;
@@ -56,6 +57,7 @@ code:focus {
 }
 
 pre code {
+  background-color: #F0FFF0;
   border: none;
 }
 
